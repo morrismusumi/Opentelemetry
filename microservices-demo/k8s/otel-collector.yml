@@ -1,0 +1,30 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: microservices-demo
+  namespace: opentelemetry-operator-system
+spec:
+  managementState: managed
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+    processors:
+
+    exporters:
+      otlp: 
+        endpoint: "grafana-tempo.monitoring.svc.cluster.local:4317" 
+        tls: 
+          insecure: true 
+      debug: {}
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: []
+          exporters: [otlp]
