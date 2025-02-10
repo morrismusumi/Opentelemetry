@@ -5,7 +5,7 @@ metadata:
   namespace: microservices-demo
 spec:
   exporter:
-    endpoint: http://microservices-demo-collector.opentelemetry-operator-system.svc.cluster.local:4317
+    endpoint: http://microservices-demo-collector.opentelemetry-operator-system.svc.cluster.local:4318
   propagators:
     - tracecontext
     - baggage
@@ -16,12 +16,5 @@ spec:
     env:
     - name: OTEL_METRICS_EXPORTER
       value: none
-    - name: OTEL_EXPORTER_OTLP_PROTOCOL
-      value: grpc
-
-    # - name: OTEL_LOG_LEVEL
-    #   value: DEBUG
-    # - name: OTEL_EXPORTER_CONSOLE
-    #   value: "true"
     - name: OTEL_TRACES_EXPORTER
       value: otlp,console
