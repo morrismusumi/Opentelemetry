@@ -1,4 +1,5 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, status
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 import psycopg2
 from config import DB_HOST, DB_PORT, DB_USER, DB_PASS, OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
@@ -80,9 +81,10 @@ def save_order_to_db(order_no):
             conn.close()
             
             print(f"INFO:     Order: {order_no} saved successfully!")
-            
+            return True
         except (Exception, psycopg2.DatabaseError) as error:
             print(f"Error: {error}")
+            return False
 
 
 # Define your POST endpoint to receive plain text
@@ -93,9 +95,11 @@ async def home():
 # Define your POST endpoint to receive plain text
 @app.post("/orders")
 async def receive_text(order: Order):
-    save_order_to_db(order.order_no)
-    return {"status": "success", "message": f"Order: {order.order_no} created!"}
+    if save_order_to_db(order.order_no):
+        return JSONResponse(content={"status": "success", "message": f"Order: {order.order_no} created!"}, status_code=status.HTTP_200_OK)
+    else:
+        return JSONResponse(content={"status": "failed", "message": f"Failed to Create Order: {order.order_no}"}, status_code=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=False)
