@@ -41,7 +41,7 @@ def connect_to_postgres():
 def save_order_to_db(order_no):
     try:
         conn, cursor = connect_to_postgres()
-        insert_sql = "INSERT INTO orders (order_no) VALUES (%s);"
+        insert_sql = "INSERT INTO orders_db (order_no) VALUES (%s);"
         cursor.execute(insert_sql, (order_no,))
         conn.commit()
         cursor.close()
@@ -66,7 +66,7 @@ async def receive_text(order: Order):
     if save_order_to_db(order.order_no):
         return JSONResponse(content={"status": "success", "message": f"Order: {order.order_no} created!"}, status_code=status.HTTP_200_OK)
     else:
-        return JSONResponse(content={"status": "failed", "message": f"Failed to Create Order: {order.order_no}"}, status_code=status.HTTP_503_SERVICE_UNAVAILABLE)
+        return JSONResponse(content={"status": "failed", "message": f"Failed to Create Order: {order.order_no}"}, status_code=status.HTTP_200_OK)
 
 if __name__ == "__main__":
     import uvicorn
