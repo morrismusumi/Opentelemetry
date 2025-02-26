@@ -10,7 +10,7 @@ spec:
   replicas: 1
   template:
     metadata:
-      annotations:
+      annotations: 
         instrumentation.opentelemetry.io/inject-python: "true"
       labels:
         app.kubernetes.io/name: microservices-demo-worker
